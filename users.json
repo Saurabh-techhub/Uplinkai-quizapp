@@ -1,0 +1,18 @@
+{
+  "Anamika": {
+    "password": "pbkdf2:sha256:600000$R1nfVRlwOvlHDs2Y$175c49f1eeb5a088b29a17641f83494cde484652cb77bfcd5067975e4815dd33",
+    "role": "student"
+  },
+  "A": {
+    "password": "pbkdf2:sha256:600000$I3eanYWTF54Q8sFH$6462bafcc811c4457d4dd3a8e9b810d48c74d8de238e53c9b1fc6c790e2025f7",
+    "role": "student"
+  },
+  "Shyam": {
+    "password": "pbkdf2:sha256:600000$T3FBy7E0zUicjNoM$03fd95998dda8adfc4019c762da1d303336d3b82d1f324dcfa869322c07ac70e",
+    "role": "teacher"
+  },
+  "An": {
+    "password": "pbkdf2:sha256:600000$aaSBLrMuOzFMsn8R$761af141b7108f633fef78ad5b2f0925737b769e61152b38a5ab5544b37020d9",
+    "role": "teacher"
+  }
+}

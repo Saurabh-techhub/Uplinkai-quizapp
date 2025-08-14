@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title }} - Quizzy</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container" style="max-width: 900px; margin: 1rem auto; padding: 0 1rem;">
+        
+        <!-- Quiz Header -->
+        <div class="quiz-header">
+            <h2 class="quiz-title">{{ title }}</h2>
+            
+            <!-- Timer Section -->
+            {% if time_limit and time_limit > 0 %}
+                <div class="timer-container">
+                    <div class="timer" id="timerDisplay">
+                        <i class="fas fa-hourglass-half" style="margin-right: 0.5rem;"></i>
+                        <span id="timer">{{ "%02d:%02d"|format((time_limit * 60) // 60, (time_limit * 60) % 60) }}</span>
+                    </div>
+                </div>
+                
+                <script>
+                    var secs = Number("{{ time_limit * 60 }}");
+                    var span = document.getElementById('timer');
+                    var timerDisplay = document.getElementById('timerDisplay');
+
+                    function tick(){
+                        var m = Math.floor(secs/60);
+                        var s = secs % 60;
+                        span.textContent = (m<10 ? '0' : '') + m + ":" + (s<10 ? '0' : '') + s;
+                        
+                        // Change color based on remaining time
+                        if(secs <= 60) {
+                            timerDisplay.style.background = 'linear-gradient(135deg, #f56565 0%, #e53e3e 100%)';
+                            timerDisplay.style.animation = 'pulse 1s infinite';
+                        } else if(secs <= 300) {
+                            timerDisplay.style.background = 'linear-gradient(135deg, #ed8936 0%, #dd6b20 100%)';
+                        }
+                        
+                        if(secs <= 0){
+                            document.getElementById('quizForm').submit();
+                        } else {
+                            secs--;
+                            setTimeout(tick, 1000);
+                        }
+                    }
+                    tick();
+                </script>
+            {% else %}
+                <div style="text-align: center; padding: 1rem; background: rgba(72, 187, 120, 0.1); border-radius: 12px; color: #48bb78; margin-bottom: 2rem;">
+                    <i class="fas fa-infinity" style="font-size: 1.5rem; margin-right: 0.5rem;"></i>
+                    <strong>No time limit - Take your time! 🕰️</strong>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Progress Bar -->
+        <div style="background: #e2e8f0; height: 6px; border-radius: 3px; margin: 2rem 0; overflow: hidden;">
+            <div id="progressBar" style="height: 100%; background: linear-gradient(90deg, #667eea, #764ba2); width: 0%; transition: width 0.3s ease; border-radius: 3px;"></div>
+        </div>
+
+        <!-- Quiz Form -->
+        <form method="post" id="quizForm">
+            {% set letters = ['A', 'B', 'C', 'D'] %}
+            {% for q_index in range(questions|length) %}
+                {% set q = questions[q_index] %}
+                <div class="question-card" data-question="{{ q_index + 1 }}">
+                    <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 1.5rem;">
+                        <h3 class="question-title">
+                            <span style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.9rem; margin-right: 1rem;">
+                                Q{{ q_index + 1 }}
+                            </span>
+                            {{ q.q }}
+                        </h3>
+                        <div style="font-size: 0.8rem; color: #a0aec0;">
+                            {{ q_index + 1 }} of {{ questions|length }}
+                        </div>
+                    </div>
+                    
+                    <div class="option-group">
+                        {% for o_index in range(q.options|length) %}
+                            <label class="option" data-option="{{ letters[o_index] }}">
+                                <input type="radio" name="q{{ q_index + 1 }}" value="{{ letters[o_index] }}" required onchange="updateProgress()">
+                                <div style="display: flex; align-items: center; width: 100%;">
+                                    <div style="background: #667eea; color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; margin-right: 1rem; font-size: 0.9rem;">
+                                        {{ letters[o_index] }}
+                                    </div>
+                                    <span style="flex: 1;">{{ q.options[o_index] }}</span>
+                                </div>
+                            </label>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
+
+            <!-- Submit Section -->
+            <div style="text-align: center; margin: 3rem 0; padding: 2rem; background: rgba(102, 126, 234, 0.05); border-radius: 16px; border: 1px solid rgba(102, 126, 234, 0.2);">
+                <div style="margin-bottom: 1rem;">
+                    <i class="fas fa-check-circle" style="font-size: 2rem; color: #48bb78;"></i>
+                </div>
+                <h3 style="color: #667eea; margin-bottom: 1rem;">Ready to submit?</h3>
+                <p style="color: #718096; margin-bottom: 2rem;">
+                    Review your answers before submitting. You have answered 
+                    <span id="answeredCount" style="font-weight: 600; color: #667eea;">0</span> 
+                    out of {{ questions|length }} questions.
+                </p>
+                
+                <div style="display: flex; gap: 1rem; justify-content: center;">
+                    <a href="{{ url_for('profile') }}" class="btn btn-outline">
+                        <i class="fas fa-times"></i> Cancel Quiz
+                    </a>
+                    <button type="submit" class="btn btn-primary btn-large" id="submitBtn" disabled>
+                        <i class="fas fa-paper-plane"></i> Submit Answers
+                    </button>
+                </div>
+            </div>
+        </form>
+
+        <!-- Completion Modal (hidden initially) -->
+        <div id="completionModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9999; backdrop-filter: blur(5px);">
+            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 3rem; border-radius: 16px; text-align: center; max-width: 400px; width: 90%;">
+                <div style="font-size: 4rem; margin-bottom: 1rem;">
+                    <i class="fas fa-trophy" style="color: #ffd700;"></i>
+                </div>
+                <h3 style="color: #667eea; margin-bottom: 1rem;">Quiz Submitted! 🎉</h3>
+                <p style="color: #718096;">Your answers have been recorded. Great job on completing the quiz!</p>
+                <div class="loading" style="margin: 1rem auto;"></div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .option:hover {
+            background: rgba(102, 126, 234, 0.1) !important;
+            border-color: #667eea !important;
+            transform: translateX(5px);
+        }
+
+        .option:has(input[type="radio"]:checked) {
+            background: rgba(102, 126, 234, 0.15) !important;
+            border-color: #667eea !important;
+            border-width: 3px;
+        }
+
+        .option input[type="radio"]:checked + div {
+            font-weight: 600;
+        }
+
+        .option input[type="radio"]:checked + div > div {
+            background: linear-gradient(135deg, #48bb78 0%, #38b2ac 100%) !important;
+            transform: scale(1.1);
+        }
+
+        /* Smooth transitions for all interactive elements */
+        .option, .btn, .question-card {
+            transition: all 0.3s ease;
+        }
+
+        .question-card:hover {
+            box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+        }
+    </style>
+
+    <script>
+        let totalQuestions = {{ questions|length }};
+        let answeredQuestions = 0;
+
+        function updateProgress() {
+            // Count answered questions
+            answeredQuestions = 0;
+            for (let i = 1; i <= totalQuestions; i++) {
+                if (document.querySelector(`input[name="q${i}"]:checked`)) {
+                    answeredQuestions++;
+                }
+            }
+
+            // Update progress bar
+            const progress = (answeredQuestions / totalQuestions) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+
+            // Update counter
+            document.getElementById('answeredCount').textContent = answeredQuestions;
+
+            // Enable/disable submit button
+            const submitBtn = document.getElementById('submitBtn');
+            if (answeredQuestions === totalQuestions) {
+                submitBtn.disabled = false;
+                submitBtn.style.opacity = '1';
+                submitBtn.style.cursor = 'pointer';
+            } else {
+                submitBtn.disabled = true;
+                submitBtn.style.opacity = '0.6';
+                submitBtn.style.cursor = 'not-allowed';
+            }
+        }
+
+        // Handle form submission
+        document.getElementById('quizForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Show completion modal
+            document.getElementById('completionModal').style.display = 'block';
+            
+            // Submit after a short delay for better UX
+            setTimeout(() => {
+                this.submit();
+            }, 2000);
+        });
+
+        // Add smooth scrolling to questions
+        document.addEventListener('DOMContentLoaded', function() {
+            const questionCards = document.querySelectorAll('.question-card');
+            
+            // Add fade-in animation
+            questionCards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                setTimeout(() => {
+                    card.style.transition = 'all 0.6s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 150);
+            });
+
+            // Auto-scroll to next question when answered
+            const radioButtons = document.querySelectorAll('input[type="radio"]');
+            radioButtons.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    const currentCard = this.closest('.question-card');
+                    const nextCard = currentCard.nextElementSibling;
+                    
+                    if (nextCard && nextCard.classList.contains('question-card')) {
+                        setTimeout(() => {
+                            nextCard.scrollIntoView({ 
+                                behavior: 'smooth', 
+                                block: 'center' 
+                            });
+                        }, 300);
+                    }
+                });
+            });
+        });
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key >= '1' && e.key <= '4') {
+                const focusedCard = document.querySelector('.question-card:hover') || 
+                                  document.querySelector('.question-card');
+                if (focusedCard) {
+                    const options = ['A', 'B', 'C', 'D'];
+                    const optionIndex = parseInt(e.key) - 1;
+                    if (optionIndex < options.length) {
+                        const radio = focusedCard.querySelector(`input[value="${options[optionIndex]}"]`);
+                        if (radio) {
+                            radio.checked = true;
+                            updateProgress();
+                        }
+                    }
+                }
+            }
+        });
+
+        // Warning before leaving page
+        window.addEventListener('beforeunload', function(e) {
+            if (answeredQuestions > 0 && answeredQuestions < totalQuestions) {
+                e.preventDefault();
+                e.returnValue = '';
+                return 'You have unsaved answers. Are you sure you want to leave?';
+            }
+        });
+
+        // Initialize progress
+        updateProgress();
+    </script>
+</body>
+</html>

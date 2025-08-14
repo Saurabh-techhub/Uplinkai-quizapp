@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title }} Results - Quizzy</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container" style="max-width: 800px; margin: 2rem auto; padding: 0 1rem;">
+        
+        <!-- Header -->
+        <div class="quiz-header">
+            <h2 class="quiz-title">{{ title }}</h2>
+            <div style="text-align: center; margin: 1rem 0;">
+                <div style="display: inline-flex; align-items: center; background: rgba(102, 126, 234, 0.1); padding: 0.75rem 1.5rem; border-radius: 20px; font-weight: 600; color: #667eea;">
+                    <i class="fas fa-chart-bar" style="margin-right: 0.5rem; color: #4facfe;"></i>
+                    Quiz Results & Leaderboard
+                </div>
+            </div>
+        </div>
+
+        <!-- Personal Score (if available) -->
+        {% if my_score is not none %}
+        <div class="card" style="margin-bottom: 2rem; background: linear-gradient(135deg, rgba(72, 187, 120, 0.1) 0%, rgba(56, 178, 172, 0.1) 100%); border-left: 4px solid #48bb78;">
+            <div style="text-align: center;">
+                <div style="font-size: 4rem; margin-bottom: 1rem;">
+                    {% if my_score >= 80 %}
+                        <i class="fas fa-trophy" style="color: #ffd700;"></i>
+                    {% elif my_score >= 60 %}
+                        <i class="fas fa-medal" style="color: #e2e8f0;"></i>
+                    {% else %}
+                        <i class="fas fa-star" style="color: #ed8936;"></i>
+                    {% endif %}
+                </div>
+                <h3 style="color: #48bb78; margin-bottom: 0.5rem;">Your Score</h3>
+                <div style="font-size: 3rem; font-weight: 800; color: #48bb78; margin-bottom: 1rem;">
+                    {{ my_score }}
+                    <span style="font-size: 1.5rem; color: #718096;">/100</span>
+                </div>
+                
+                <!-- Performance Message -->
+                <div style="padding: 1rem; border-radius: 12px; margin-top: 1rem;">
+                    {% if my_score >= 90 %}
+                        <p style="color: #48bb78; font-weight: 600;">🎉 Outstanding! You're a quiz master!</p>
+                    {% elif my_score >= 80 %}
+                        <p style="color: #4facfe; font-weight: 600;">🌟 Excellent work! Keep it up!</p>
+                    {% elif my_score >= 70 %}
+                        <p style="color: #ed8936; font-weight: 600;">👍 Good job! You're on the right track!</p>
+                    {% elif my_score >= 60 %}
+                        <p style="color: #f093fb; font-weight: 600;">📚 Not bad! Keep studying and you'll improve!</p>
+                    {% else %}
+                        <p style="color: #f56565; font-weight: 600;">💪 Don't give up! Practice makes perfect!</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Leaderboard -->
+        <div class="card">
+            <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 2rem;">
+                <h3 style="color: #667eea;">
+                    <i class="fas fa-trophy"></i> Top Performers
+                </h3>
+                <div style="background: linear-gradient(135deg, #ffd700 0%, #ff8c00 100%); color: white; padding: 0.5rem 1rem; border-radius: 20px; font-weight: 700; font-size: 0.9rem;">
+                    <i class="fas fa-crown"></i> Leaderboard
+                </div>
+            </div>
+
+            {% if leaderboard %}
+                <div style="display: grid; gap: 1rem;">
+                    {% for r in leaderboard %}
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 1.5rem; border-radius: 12px; transition: all 0.3s ease; {% if loop.index == 1 %}background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(255, 140, 0, 0.1) 100%); border: 2px solid rgba(255, 215, 0, 0.3);{% elif loop.index == 2 %}background: rgba(192, 192, 192, 0.1); border: 2px solid rgba(192, 192, 192, 0.3);{% elif loop.index == 3 %}background: rgba(205, 127, 50, 0.1); border: 2px solid rgba(205, 127, 50, 0.3);{% else %}background: rgba(102, 126, 234, 0.05); border: 2px solid rgba(102, 126, 234, 0.1);{% endif %}">
+                            
+                            <div style="display: flex; align-items: center; gap: 1rem;">
+                                <!-- Rank Badge -->
+                                <div style="width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.2rem; {% if loop.index == 1 %}background: linear-gradient(135deg, #ffd700 0%, #ff8c00 100%); color: white;{% elif loop.index == 2 %}background: linear-gradient(135deg, #c0c0c0 0%, #a8a8a8 100%); color: white;{% elif loop.index == 3 %}background: linear-gradient(135deg, #cd7f32 0%, #b8860b 100%); color: white;{% else %}background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;{% endif %}">
+                                    {% if loop.index == 1 %}
+                                        <i class="fas fa-crown"></i>
+                                    {% elif loop.index == 2 %}
+                                        <i class="fas fa-medal"></i>
+                                    {% elif loop.index == 3 %}
+                                        <i class="fas fa-award"></i>
+                                    {% else %}
+                                        {{ loop.index }}
+                                    {% endif %}
+                                </div>
+                                
+                                <!-- Student Info -->
+                                <div>
+                                    <h4 style="margin: 0; color: #4a5568; {% if loop.index <= 3 %}font-size: 1.1rem;{% endif %}">
+                                        {{ r.student }}
+                                        {% if loop.index == 1 %} 👑{% elif loop.index == 2 %} 🥈{% elif loop.index == 3 %} 🥉{% endif %}
+                                    </h4>
+                                    <p style="margin: 0.25rem 0 0 0; font-size: 0.9rem; color: #718096;">
+                                        {% if loop.index == 1 %}🏆 Champion{% elif loop.index == 2 %}🌟 Runner-up{% elif loop.index == 3 %}✨ Third Place{% else %}🎯 Top Performer{% endif %}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Score -->
+                            <div style="text-align: right;">
+                                <div style="font-size: 1.8rem; font-weight: 800; {% if loop.index == 1 %}color: #ffd700;{% elif loop.index == 2 %}color: #c0c0c0;{% elif loop.index == 3 %}color: #cd7f32;{% else %}color: #667eea;{% endif %}">
+                                    {{ r.score }}
+                                </div>
+                                <p style="margin: 0; font-size: 0.8rem; color: #a0aec0;">points</p>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Stats Summary -->
+                <div style="margin-top: 2rem; padding: 1.5rem; background: rgba(102, 126, 234, 0.05); border-radius: 12px; border-left: 4px solid #667eea;">
+                    <h4 style="color: #667eea; margin-bottom: 1rem;">
+                        <i class="fas fa-chart-pie"></i> Quiz Statistics
+                    </h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem;">
+                        <div style="text-align: center;">
+                            <div style="font-size: 1.5rem; font-weight: 700; color: #4facfe;">{{ leaderboard|length }}</div>
+                            <p style="font-size: 0.9rem; color: #718096; margin: 0.25rem 0 0 0;">Participants</p>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 1.5rem; font-weight: 700; color: #48bb78;">{{ "%.1f"|format(leaderboard|sum(attribute='score')/leaderboard|length) }}</div>
+                            <p style="font-size: 0.9rem; color: #718096; margin: 0.25rem 0 0 0;">Average Score</p>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 1.5rem; font-weight: 700; color: #ffd700;">{{ leaderboard[0].score if leaderboard else 0 }}</div>
+                            <p style="font-size: 0.9rem; color: #718096; margin: 0.25rem 0 0 0;">Highest Score</p>
+                        </div>
+                    </div>
+                </div>
+
+            {% else %}
+                <div style="text-align: center; padding: 4rem 2rem; color: #718096;">
+                    <div style="font-size: 4rem; margin-bottom: 1rem; opacity: 0.3;">
+                        <i class="fas fa-users-slash"></i>
+                    </div>
+                    <h3 style="color: #a0aec0; margin-bottom: 1rem;">No submissions yet</h3>
+                    <p>Be the first to take this quiz and claim the top spot! 🏆</p>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Action Buttons -->
+        <div style="text-align: center; margin-top: 3rem;">
+            <a href="{{ url_for('profile') }}" class="btn btn-primary btn-large">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Add animations on load
+        document.addEventListener('DOMContentLoaded', function() {
+            const leaderboardItems = document.querySelectorAll('[style*="justify-content: between"]');
+            
+            leaderboardItems.forEach((item, index) => {
+                if (item.querySelector('[style*="width: 50px"]')) { // Only leaderboard items
+                    item.style.opacity = '0';
+                    item.style.transform = 'translateX(-30px)';
+                    setTimeout(() => {
+                        item.style.transition = 'all 0.6s ease';
+                        item.style.opacity = '1';
+                        item.style.transform = 'translateX(0)';
+                    }, index * 200);
+                }
+            });
+
+            // Add hover effects
+            leaderboardItems.forEach(item => {
+                if (item.querySelector('[style*="width: 50px"]')) {
+                    item.addEventListener('mouseenter', function() {
+                        this.style.transform = 'translateX(10px) scale(1.02)';
+                        this.style.boxShadow = '0 8px 25px rgba(0,0,0,0.15)';
+                    });
+                    item.addEventListener('mouseleave', function() {
+                        this.style.transform = 'translateX(0) scale(1)';
+                        this.style.boxShadow = 'none';
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

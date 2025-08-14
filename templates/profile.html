@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard - Quizzy</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container" style="margin: 2rem auto; padding: 0 1rem;">
+        
+        <!-- Profile Header -->
+        <div class="profile-header">
+            <div style="display: flex; align-items: center; justify-content: center; gap: 1rem; margin-bottom: 1rem;">
+                <div style="font-size: 4rem;">
+                    {% if role == 'teacher' %}
+                        <i class="fas fa-chalkboard-teacher" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;"></i>
+                    {% else %}
+                        <i class="fas fa-graduation-cap" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;"></i>
+                    {% endif %}
+                </div>
+                <div style="text-align: left;">
+                    <h2 style="font-size: 2.5rem; margin-bottom: 0.5rem;">
+                        Hello, <span style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">{{ username }}</span>! 👋
+                    </h2>
+                    <div style="display: inline-flex; align-items: center; background: rgba(102, 126, 234, 0.1); padding: 0.5rem 1rem; border-radius: 20px; font-weight: 600; color: #667eea;">
+                        {% if role == 'teacher' %}
+                            <i class="fas fa-star" style="margin-right: 0.5rem; color: #ffd700;"></i>
+                            Teacher Account
+                        {% else %}
+                            <i class="fas fa-user-graduate" style="margin-right: 0.5rem; color: #4facfe;"></i>
+                            Student Account
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions Navigation -->
+        <nav class="profile-nav">
+            {% if role == 'teacher' %}
+                <a href="{{ url_for('create_quiz') }}" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                    <i class="fas fa-plus-circle"></i> Create Quiz
+                </a>
+                <a href="{{ url_for('create_ai_quiz') }}" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">
+                    <i class="fas fa-magic"></i> Create AI Quiz
+                </a>
+            {% else %}
+                <a href="{{ url_for('join_quiz') }}" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white;">
+                    <i class="fas fa-play-circle"></i> Join Quiz
+                </a>
+            {% endif %}
+            <a href="{{ url_for('logout') }}" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); color: white;">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </nav>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            {% if role == 'teacher' %}
+                <!-- Teacher Stats -->
+                <div class="stat-card">
+                    <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 1rem;">
+                        <h3 style="color: #667eea;">
+                            <i class="fas fa-clipboard-list"></i> Your Quizzes
+                        </h3>
+                        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 0.5rem 1rem; border-radius: 20px; font-weight: 700; font-size: 1.1rem;">
+                            {{ total_created }}
+                        </div>
+                    </div>
+
+                    {% if created_quizzes %}
+                        <div style="max-height: 400px; overflow-y: auto;">
+                            {% for q in created_quizzes %}
+                                <div class="quiz-item">
+                                    <div>
+                                        <h4 style="margin-bottom: 0.25rem; color: #4a5568;">{{ q.title }}</h4>
+                                        <div style="display: flex; gap: 1rem; align-items: center; font-size: 0.9rem; color: #718096;">
+                                            <span><i class="fas fa-key" style="color: #667eea;"></i> <strong class="quiz-code">{{ q.code }}</strong></span>
+                                            <span><i class="fas fa-clock" style="color: #ed8936;"></i> {{ q.time_limit }} min</span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <a href="{{ url_for('result', code=q.code) }}" class="btn btn-outline" style="padding: 0.5rem 1rem; font-size: 0.85rem;">
+                                            <i class="fas fa-chart-bar"></i> Leaderboard
+                                        </a>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div style="text-align: center; padding: 2rem; color: #718096;">
+                            <i class="fas fa-clipboard" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.3;"></i>
+                            <p style="margin-bottom: 1rem;">No quizzes created yet.</p>
+                            <a href="{{ url_for('create_quiz') }}" class="btn btn-primary">
+                                <i class="fas fa-plus"></i> Create Your First Quiz
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+
+            {% else %}
+                <!-- Student Stats -->
+                <div class="stat-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                        <h3 style="color: #48bb78;">
+                            <i class="fas fa-trophy"></i> Top 10 Scores
+                        </h3>
+                        <div style="background: linear-gradient(135deg, #48bb78 0%, #38b2ac 100%); color: white; padding: 0.5rem 1rem; border-radius: 20px; font-weight: 700; font-size: 0.9rem;">
+                            <i class="fas fa-crown"></i> BEST
+                        </div>
+                    </div>
+
+                    {% if best10 and best10|length > 0 %}
+                        <div style="max-height: 300px; overflow-y: auto;">
+                            {% for b in best10 %}
+                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; margin: 0.5rem 0; background: rgba(72, 187, 120, 0.05); border-radius: 8px; border-left: 3px solid #48bb78;">
+                                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                        <div style="background: linear-gradient(135deg, #48bb78 0%, #38b2ac 100%); color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700;">
+                                            {{ loop.index }}
+                                        </div>
+                                        <div>
+                                            <h5 style="margin: 0; color: #4a5568;">{{ b.title }}</h5>
+                                        </div>
+                                    </div>
+                                    <div style="font-weight: 700; color: #48bb78; font-size: 1.1rem;">
+                                        {{ b.score }}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div style="text-align: center; padding: 2rem; color: #718096;">
+                            <i class="fas fa-trophy" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.3;"></i>
+                            <p>No scores yet. Take some quizzes to see your best performances!</p>
+                        </div>
+                    {% endif %}
+                </div>
+
+
+                    {% if attempted_quizzes %}
+                        <div style="max-height: 300px; overflow-y: auto;">
+                            {% for a in attempted_quizzes %}
+                                <div class="quiz-item">
+                                    <div>
+                                        <h4 style="margin-bottom: 0.25rem; color: #4a5568;">{{ a.title }}</h4>
+                                        <div style="font-size: 0.9rem; color: #718096;">
+                                            <i class="fas fa-medal" style="color: #ffd700;"></i> Score: <strong style="color: #4facfe;">{{ a.score }}</strong>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div style="text-align: center; padding: 2rem; color: #718096;">
+                            <i class="fas fa-play-circle" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.3;"></i>
+                            <p style="margin-bottom: 1rem;">No quiz attempts yet.</p>
+                            <a href="{{ url_for('join_quiz') }}" class="btn btn-primary">
+                                <i class="fas fa-play"></i> Join Your First Quiz
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="stat-card">
+                    <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 1rem;">
+                        <h3 style="color: #48bb78;">
+                            <i class="fas fa-trophy"></i> Top 10 Scores
+                        </h3>
+                        <div style="background: linear-gradient(135deg, #48bb78 0%, #38b2ac 100%); color: white; padding: 0.5rem 1rem; border-radius: 20px; font-weight: 700; font-size: 0.9rem;">
+                            <i class="fas fa-crown"></i> BEST
+                        </div>
+                    </div>
+
+                    {% if best10 %}
+                        <div style="max-height: 300px; overflow-y: auto;">
+                            {% for b in best10 %}
+                                <div style="display: flex; justify-content: between; align-items: center; padding: 0.75rem; margin: 0.5rem 0; background: rgba(72, 187, 120, 0.05); border-radius: 8px; border-left: 3px solid #48bb78;">
+                                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                        <div style="background: linear-gradient(135deg, #48bb78 0%, #38b2ac 100%); color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700;">
+                                            {{ loop.index }}
+                                        </div>
+                                        <div>
+                                            <h5 style="margin: 0; color: #4a5568;">{{ b.title }}</h5>
+                                        </div>
+                                    </div>
+                                    <div style="font-weight: 700; color: #48bb78; font-size: 1.1rem;">
+                                        {{ b.score }}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div style="text-align: center; padding: 2rem; color: #718096;">
+                            <i class="fas fa-trophy" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.3;"></i>
+                            <p>No scores yet. Take some quizzes to see your best performances!</p>
+                        </div>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Motivational Section -->
+        <div style="text-align: center; margin: 3rem 0; padding: 2rem; background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(240, 147, 251, 0.1) 100%); border-radius: 16px; border: 1px solid rgba(102, 126, 234, 0.2);">
+            {% if role == 'teacher' %}
+                <h3 style="color: #667eea; margin-bottom: 1rem;">
+                    <i class="fas fa-lightbulb" style="color: #ffd700;"></i>
+                    Ready to inspire minds?
+                </h3>
+                <p style="color: #718096; margin-bottom: 1.5rem; font-size: 1.1rem;">
+                    Create engaging quizzes that make learning fun and memorable for your students.
+                </p>
+                <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                    <a href="{{ url_for('create_quiz') }}" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Create Custom Quiz
+                    </a>
+                    <a href="{{ url_for('create_ai_quiz') }}" class="btn btn-secondary">
+                        <i class="fas fa-magic"></i> Try AI Generator
+                    </a>
+                </div>
+            {% else %}
+                <h3 style="color: #4facfe; margin-bottom: 1rem;">
+                    <i class="fas fa-rocket" style="color: #ffd700;"></i>
+                    Keep learning and growing!
+                </h3>
+                <p style="color: #718096; margin-bottom: 1.5rem; font-size: 1.1rem;">
+                    Every quiz is a step towards mastering new knowledge. What will you learn today?
+                </p>
+                <a href="{{ url_for('join_quiz') }}" class="btn btn-primary btn-large">
+                    <i class="fas fa-play-circle"></i> Join a Quiz Now
+                </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        // Add some interactive animations
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animate stat cards on load
+            const statCards = document.querySelectorAll('.stat-card');
+            statCards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                setTimeout(() => {
+                    card.style.transition = 'all 0.6s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 200);
+            });
+
+            // Add hover effects to quiz items
+            const quizItems = document.querySelectorAll('.quiz-item');
+            quizItems.forEach(item => {
+                item.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateX(5px)';
+                });
+                item.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateX(0)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

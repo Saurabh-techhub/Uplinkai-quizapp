@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Create Quiz - Quizzy</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container" style="max-width: 800px; margin: 2rem auto; padding: 0 1rem;">
+        <!-- Header -->
+        <div class="quiz-header">
+            <h2 class="quiz-title">
+                <i class="fas fa-plus-circle" style="color: #667eea;"></i>
+                Create Your Quiz
+            </h2>
+            <p style="color: #718096; font-size: 1.1rem;">Build an engaging quiz for your students</p>
+        </div>
+
+        <!-- Quiz Form -->
+        <form method="post" id="quizForm" class="card" style="padding: 2.5rem;">
+            <!-- Quiz Details -->
+            <div style="margin-bottom: 2rem; padding: 1.5rem; background: rgba(102, 126, 234, 0.05); border-radius: 12px; border-left: 4px solid #667eea;">
+                <h3 style="margin-bottom: 1.5rem; color: #667eea;">
+                    <i class="fas fa-info-circle"></i> Quiz Details
+                </h3>
+                
+                <div class="form-group">
+                    <label for="title">
+                        <i class="fas fa-heading" style="margin-right: 0.5rem; color: #667eea;"></i>
+                        Quiz Title
+                    </label>
+                    <input type="text" id="title" name="title" required class="form-input" placeholder="Enter an engaging quiz title">
+                </div>
+
+                <div class="form-group">
+                    <label for="time_limit">
+                        <i class="fas fa-clock" style="margin-right: 0.5rem; color: #667eea;"></i>
+                        Time Limit (minutes)
+                    </label>
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <input type="number" id="time_limit" name="time_limit" min="0" value="10" required class="form-input" style="flex: 1;">
+                        <span style="color: #718096; font-size: 0.9rem;">Set to 0 for no timer</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Questions Section -->
+            <div style="margin-bottom: 2rem;">
+                <h3 style="margin-bottom: 1.5rem; color: #667eea;">
+                    <i class="fas fa-question-circle"></i> Questions
+                </h3>
+                
+                <div id="qs">
+                    <div class="qrow question-card">
+                        <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 1.5rem;">
+                            <h4 style="color: #4a5568;">
+                                <i class="fas fa-edit" style="color: #667eea; margin-right: 0.5rem;"></i>
+                                Question 1
+                            </h4>
+                            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem;">
+                                Required
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <input name="q1" placeholder="Enter your question here..." required class="form-input" style="font-weight: 500;">
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                            <div class="form-group">
+                                <label style="font-size: 0.9rem; color: #667eea;">Option A</label>
+                                <input name="opt_a1" required class="form-input" placeholder="Enter option A">
+                            </div>
+                            <div class="form-group">
+                                <label style="font-size: 0.9rem; color: #667eea;">Option B</label>
+                                <input name="opt_b1" required class="form-input" placeholder="Enter option B">
+                            </div>
+                            <div class="form-group">
+                                <label style="font-size: 0.9rem; color: #667eea;">Option C</label>
+                                <input name="opt_c1" required class="form-input" placeholder="Enter option C">
+                            </div>
+                            <div class="form-group">
+                                <label style="font-size: 0.9rem; color: #667eea;">Option D</label>
+                                <input name="opt_d1" required class="form-input" placeholder="Enter option D">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label style="color: #48bb78;">
+                                <i class="fas fa-check-circle" style="margin-right: 0.5rem;"></i>
+                                Correct Answer
+                            </label>
+                            <select name="correct1" required class="form-select" style="max-width: 200px;">
+                                <option value="A">A</option>
+                                <option value="B">B</option>
+                                <option value="C">C</option>
+                                <option value="D">D</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin: 2rem 0;">
+                    <button type="button" onclick="addQ()" class="btn btn-outline" style="padding: 0.75rem 1.5rem;">
+                        <i class="fas fa-plus"></i> Add Another Question
+                    </button>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 2rem; padding-top: 2rem; border-top: 1px solid #e2e8f0;">
+                <a href="{{ url_for('profile') }}" class="btn btn-outline">
+                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                </a>
+                <button type="submit" class="btn btn-primary btn-large">
+                    <i class="fas fa-rocket"></i> Create Quiz
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        let idx = 1;
+        
+        function addQ() {
+            idx++;
+            const d = document.createElement('div');
+            d.className = 'qrow question-card';
+            d.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <h4 style="color: #4a5568;">
+                        <i class="fas fa-edit" style="color: #667eea; margin-right: 0.5rem;"></i>
+                        Question ${idx}
+                    </h4>
+                    <button type="button" onclick="removeQuestion(this)" class="btn" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); color: white; padding: 0.25rem 0.75rem; font-size: 0.8rem;">
+                        <i class="fas fa-trash"></i> Remove
+                    </button>
+                </div>
+                
+                <div class="form-group">
+                    <input name="q${idx}" placeholder="Enter your question here..." required class="form-input" style="font-weight: 500;">
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                    <div class="form-group">
+                        <label style="font-size: 0.9rem; color: #667eea;">Option A</label>
+                        <input name="opt_a${idx}" required class="form-input" placeholder="Enter option A">
+                    </div>
+                    <div class="form-group">
+                        <label style="font-size: 0.9rem; color: #667eea;">Option B</label>
+                        <input name="opt_b${idx}" required class="form-input" placeholder="Enter option B">
+                    </div>
+                    <div class="form-group">
+                        <label style="font-size: 0.9rem; color: #667eea;">Option C</label>
+                        <input name="opt_c${idx}" required class="form-input" placeholder="Enter option C">
+                    </div>
+                    <div class="form-group">
+                        <label style="font-size: 0.9rem; color: #667eea;">Option D</label>
+                        <input name="opt_d${idx}" required class="form-input" placeholder="Enter option D">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label style="color: #48bb78;">
+                        <i class="fas fa-check-circle" style="margin-right: 0.5rem;"></i>
+                        Correct Answer
+                    </label>
+                    <select name="correct${idx}" required class="form-select" style="max-width: 200px;">
+                        <option value="A">A</option>
+                        <option value="B">B</option>
+                        <option value="C">C</option>
+                        <option value="D">D</option>
+                    </select>
+                </div>
+            `;
+            document.getElementById('qs').appendChild(d);
+            
+            // Add animation
+            d.style.opacity = '0';
+            d.style.transform = 'translateY(20px)';
+            setTimeout(() => {
+                d.style.transition = 'all 0.5s ease';
+                d.style.opacity = '1';
+                d.style.transform = 'translateY(0)';
+            }, 10);
+        }
+        
+        function removeQuestion(button) {
+            const questionDiv = button.closest('.qrow');
+            questionDiv.style.transition = 'all 0.3s ease';
+            questionDiv.style.opacity = '0';
+            questionDiv.style.transform = 'translateX(-100px)';
+            setTimeout(() => {
+                questionDiv.remove();
+                updateQuestionNumbers();
+            }, 300);
+        }
+        
+        function updateQuestionNumbers() {
+            const questions = document.querySelectorAll('.qrow');
+            questions.forEach((q, index) => {
+                const h4 = q.querySelector('h4');
+                h4.innerHTML = `<i class="fas fa-edit" style="color: #667eea; margin-right: 0.5rem;"></i>Question ${index + 1}`;
+            });
+        }
+        
+        // Add form validation feedback
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('quizForm');
+            
+            form.addEventListener('submit', function(e) {
+                const button = form.querySelector('button[type="submit"]');
+                button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating Quiz...';
+                button.disabled = true;
+            });
+        });
+    </script>
+</body>
+</html>

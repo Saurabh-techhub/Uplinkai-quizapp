@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Join Quiz - Quizzy</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container" style="max-width: 500px; margin: 4rem auto; padding: 0 1rem;">
+        
+        <!-- Header -->
+        <div class="quiz-header">
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <div style="font-size: 4rem; margin-bottom: 1rem;">
+                    <i class="fas fa-play-circle" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;"></i>
+                </div>
+                <h2 class="quiz-title">Join a Quiz</h2>
+                <p style="color: #718096; font-size: 1.1rem;">Enter the quiz code to start your learning adventure</p>
+            </div>
+        </div>
+
+        <!-- Join Form -->
+        <form method="post" id="joinForm" class="card" style="padding: 2.5rem; background: linear-gradient(135deg, rgba(79, 172, 254, 0.05) 0%, rgba(0, 242, 254, 0.05) 100%); border: 1px solid rgba(79, 172, 254, 0.2);">
+            
+            {% if not session.get("username") %}
+                <div class="form-group">
+                    <label for="name">
+                        <i class="fas fa-user" style="margin-right: 0.5rem; color: #4facfe;"></i>
+                        Your Name
+                    </label>
+                    <input type="text" id="name" name="name" required class="form-input" placeholder="Enter your name" style="font-size: 1.1rem;">
+                    <p style="font-size: 0.85rem; color: #718096; margin-top: 0.5rem;">
+                        <i class="fas fa-info-circle" style="color: #4facfe;"></i>
+                        This will be displayed on the leaderboard
+                    </p>
+                </div>
+            {% endif %}
+
+            <div class="form-group">
+                <label for="code">
+                    <i class="fas fa-key" style="margin-right: 0.5rem; color: #4facfe;"></i>
+                    Quiz Code
+                </label>
+                <input type="text" id="code" name="code" required class="form-input" placeholder="Enter quiz code" style="font-size: 1.5rem; text-align: center; letter-spacing: 2px; text-transform: uppercase; font-weight: 700;">
+                <p style="font-size: 0.85rem; color: #718096; margin-top: 0.5rem;">
+                    <i class="fas fa-lightbulb" style="color: #ffd700;"></i>
+                    Ask your teacher for the quiz code
+                </p>
+            </div>
+
+            <!-- Quick Tips -->
+            <div style="background: rgba(72, 187, 120, 0.05); border-radius: 12px; padding: 1.5rem; margin: 2rem 0; border-left: 4px solid #48bb78;">
+                <h4 style="color: #48bb78; margin-bottom: 1rem;">
+                    <i class="fas fa-tips"></i> Quick Tips
+                </h4>
+                <div style="display: grid; gap: 0.75rem;">
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <i class="fas fa-check-circle" style="color: #48bb78; font-size: 1rem;"></i>
+                        <span style="font-size: 0.9rem;">Make sure you have a stable internet connection</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <i class="fas fa-clock" style="color: #ed8936; font-size: 1rem;"></i>
+                        <span style="font-size: 0.9rem;">Some quizzes may have time limits</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <i class="fas fa-brain" style="color: #667eea; font-size: 1rem;"></i>
+                        <span style="font-size: 0.9rem;">Take your time to read each question carefully</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 2rem;">
+                <a href="{{ url_for('profile') if session.get('username') else url_for('home') }}" class="btn btn-outline">
+                    <i class="fas fa-arrow-left"></i> Back
+                </a>
+                <button type="submit" class="btn btn-primary btn-large">
+                    <i class="fas fa-rocket"></i> Join Quiz
+                </button>
+            </div>
+        </form>
+
+        <!-- Recent Quizzes (if logged in) -->
+        {% if session.get("username") %}
+        <div style="margin-top: 3rem; text-align: center; padding: 2rem; background: rgba(255,255,255,0.5); border-radius: 16px;">
+            <h3 style="color: #667eea; margin-bottom: 1rem;">
+                <i class="fas fa-history"></i> Ready to Learn?
+            </h3>
+            <p style="color: #718096; margin-bottom: 1.5rem;">
+                Join a quiz and challenge yourself with new knowledge!
+            </p>
+            <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
+                <div style="text-align: center;">
+                    <i class="fas fa-medal" style="font-size: 2rem; color: #ffd700; margin-bottom: 0.5rem;"></i>
+                    <p style="font-size: 0.9rem; color: #718096;">Earn Points</p>
+                </div>
+                <div style="text-align: center;">
+                    <i class="fas fa-chart-line" style="font-size: 2rem; color: #4facfe; margin-bottom: 0.5rem;"></i>
+                    <p style="font-size: 0.9rem; color: #718096;">Track Progress</p>
+                </div>
+                <div style="text-align: center;">
+                    <i class="fas fa-trophy" style="font-size: 2rem; color: #f093fb; margin-bottom: 0.5rem;"></i>
+                    <p style="font-size: 0.9rem; color: #718096;">Compete</p>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9999; backdrop-filter: blur(5px);">
+        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; color: white;">
+            <div style="font-size: 4rem; margin-bottom: 1rem;">
+                <i class="fas fa-search" style="animation: pulse 1.5s infinite; color: #4facfe;"></i>
+            </div>
+            <h3 style="margin-bottom: 1rem;">Finding your quiz...</h3>
+            <div style="width: 200px; height: 4px; background: rgba(255,255,255,0.2); border-radius: 2px; overflow: hidden;">
+                <div style="height: 100%; background: linear-gradient(90deg, #4facfe, #00f2fe); border-radius: 2px; animation: loading 2s infinite;"></div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        @keyframes loading {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.7; }
+        }
+
+        /* Auto-format quiz code input */
+        #code {
+            background: linear-gradient(135deg, rgba(79, 172, 254, 0.1) 0%, rgba(0, 242, 254, 0.1) 100%);
+        }
+
+        #code:focus {
+            box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.2) !important;
+            border-color: #4facfe !important;
+        }
+    </style>
+
+    <script>
+        // Auto-format quiz code input
+        document.getElementById('code').addEventListener('input', function(e) {
+            // Convert to uppercase and remove spaces
+            this.value = this.value.toUpperCase().replace(/\s/g, '');
+        });
+
+        // Handle form submission with loading
+        document.getElementById('joinForm').addEventListener('submit', function(e) {
+            const button = this.querySelector('button[type="submit"]');
+            const overlay = document.getElementById('loadingOverlay');
+            
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Joining...';
+            button.disabled = true;
+            overlay.style.display = 'block';
+        });
+
+        // Add form validation feedback
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputs = document.querySelectorAll('.form-input');
+            
+            inputs.forEach(input => {
+                input.addEventListener('blur', function() {
+                    if (this.value.trim() !== '') {
+                        this.style.borderColor = '#48bb78';
+                        this.style.background = 'rgba(72, 187, 120, 0.05)';
+                    } else {
+                        this.style.borderColor = '#e2e8f0';
+                        this.style.background = 'var(--bg-secondary)';
+                    }
+                });
+
+                input.addEventListener('focus', function() {
+                    this.style.borderColor = '#4facfe';
+                });
+            });
+
+            // Focus on first input
+            const firstInput = document.querySelector('.form-input');
+            if (firstInput) {
+                firstInput.focus();
+            }
+        });
+
+        // Add enter key support for better UX
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                const form = document.getElementById('joinForm');
+                const inputs = form.querySelectorAll('.form-input');
+                let allFilled = true;
+                
+                inputs.forEach(input => {
+                    if (!input.value.trim()) {
+                        allFilled = false;
+                        input.focus();
+                    }
+                });
+                
+                if (allFilled) {
+                    form.submit();
+                }
+            }
+        });
+    </script>
+</body>
+</html>

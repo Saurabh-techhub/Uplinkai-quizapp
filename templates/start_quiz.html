@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Start Quiz - Quizzy</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container" style="max-width: 600px; margin: 4rem auto; padding: 0 1rem;">
+        
+        <!-- Header -->
+        <div class="quiz-header">
+            <div style="text-align: center; margin-bottom: 3rem;">
+                <div style="font-size: 5rem; margin-bottom: 1rem;">
+                    <i class="fas fa-rocket" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: bounce 2s infinite;"></i>
+                </div>
+                <h2 class="quiz-title">{{ title }}</h2>
+                <p style="color: #718096; font-size: 1.1rem;">Get ready to test your knowledge!</p>
+            </div>
+        </div>
+
+        <!-- Quiz Info Card -->
+        <div class="card" style="padding: 3rem 2rem; background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%); border: 1px solid rgba(102, 126, 234, 0.2);">
+            
+            <!-- Quiz Details -->
+            <div style="margin-bottom: 2rem;">
+                <h3 style="color: #667eea; margin-bottom: 1.5rem; text-align: center;">
+                    <i class="fas fa-info-circle"></i> Quiz Information
+                </h3>
+                
+                <div style="display: grid; gap: 1rem;">
+                    <!-- Time Limit Info -->
+                    <div style="display: flex; align-items: center; padding: 1rem; background: {% if time_limit == 0 %}rgba(72, 187, 120, 0.1){% else %}rgba(237, 137, 54, 0.1){% endif %}; border-radius: 12px; border-left: 4px solid {% if time_limit == 0 %}#48bb78{% else %}#ed8936{% endif %};">
+                        <div style="margin-right: 1rem;">
+                            {% if time_limit == 0 %}
+                                <i class="fas fa-infinity" style="font-size: 2rem; color: #48bb78;"></i>
+                            {% else %}
+                                <i class="fas fa-stopwatch" style="font-size: 2rem; color: #ed8936;"></i>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <h4 style="margin: 0; color: #4a5568;">Time Limit</h4>
+                            <p style="margin: 0.25rem 0 0 0; color: #718096;">
+                                {% if time_limit == 0 %}
+                                    No timer - Take your time! 🕰️
+                                {% else %}
+                                    {{ time_limit }} minutes ⏰
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Instructions -->
+            <div style="background: rgba(79, 172, 254, 0.05); border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem; border-left: 4px solid #4facfe;">
+                <h4 style="color: #4facfe; margin-bottom: 1rem;">
+                    <i class="fas fa-list-check"></i> Before You Start
+                </h4>
+                <div style="display: grid; gap: 0.75rem;">
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <i class="fas fa-check-circle" style="color: #48bb78; font-size: 1rem;"></i>
+                        <span style="font-size: 0.95rem;">Read each question carefully before answering</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <i class="fas fa-mouse-pointer" style="color: #667eea; font-size: 1rem;"></i>
+                        <span style="font-size: 0.95rem;">Click on your chosen answer to select it</span>
+                    </div>
+                    {% if time_limit and time_limit > 0 %}
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <i class="fas fa-clock" style="color: #ed8936; font-size: 1rem;"></i>
+                        <span style="font-size: 0.95rem;">Keep an eye on the timer at the top of the page</span>
+                    </div>
+                    {% endif %}
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <i class="fas fa-paper-plane" style="color: #f093fb; font-size: 1rem;"></i>
+                        <span style="font-size: 0.95rem;">Submit your answers when you're ready</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Motivational Message -->
+            <div style="text-align: center; padding: 2rem; background: linear-gradient(135deg, rgba(240, 147, 251, 0.1) 0%, rgba(245, 87, 108, 0.1) 100%); border-radius: 16px; margin-bottom: 2rem;">
+                <div style="font-size: 2.5rem; margin-bottom: 1rem;">
+                    <i class="fas fa-brain" style="color: #f093fb;"></i>
+                </div>
+                <h3 style="color: #f093fb; margin-bottom: 1rem;">You've Got This! 💪</h3>
+                <p style="color: #718096;">
+                    Believe in yourself and show what you know. Every question is an opportunity to learn!
+                </p>
+            </div>
+
+            <!-- Action Buttons -->
+            <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 2rem;">
+                <a href="{{ url_for('join_quiz') }}" class="btn btn-outline">
+                    <i class="fas fa-arrow-left"></i> Back
+                </a>
+                <a href="{{ url_for('take_quiz', code=code) }}" class="btn btn-primary btn-large" style="animation: pulse 2s infinite;">
+                    <i class="fas fa-play"></i> Start Quiz Now!
+                </a>
+            </div>
+
+            <!-- Countdown Timer (Optional) -->
+            <div id="countdownSection" style="display: none; text-align: center; margin-top: 2rem; padding: 1.5rem; background: rgba(102, 126, 234, 0.1); border-radius: 12px;">
+                <h4 style="color: #667eea; margin-bottom: 1rem;">Get Ready!</h4>
+                <div id="countdown" style="font-size: 3rem; font-weight: 800; color: #667eea;">3</div>
+                <p style="color: #718096; margin-top: 0.5rem;">Starting quiz in...</p>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-30px); }
+            60% { transform: translateY(-15px); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            animation: fadeIn 0.6s ease-out;
+        }
+    </style>
+
+    <script>
+        // Add interactive countdown option
+        document.addEventListener('DOMContentLoaded', function() {
+            const startButton = document.querySelector('a[href*="take_quiz"]');
+            const countdownSection = document.getElementById('countdownSection');
+            const countdownDisplay = document.getElementById('countdown');
+
+            // Optional: Add countdown on start button click
+            let countdownEnabled = false; // Set to true if you want countdown feature
+
+            if (countdownEnabled) {
+                startButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    startCountdown(this.href);
+                });
+            }
+
+            function startCountdown(quizUrl) {
+                countdownSection.style.display = 'block';
+                startButton.style.display = 'none';
+                
+                let count = 3;
+                const timer = setInterval(() => {
+                    countdownDisplay.textContent = count;
+                    count--;
+                    
+                    if (count < 0) {
+                        clearInterval(timer);
+                        window.location.href = quizUrl;
+                    }
+                }, 1000);
+            }
+
+            // Add hover effects to info cards
+            const infoCards = document.querySelectorAll('[style*="border-left: 4px solid"]');
+            infoCards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateX(5px)';
+                    this.style.transition = 'all 0.3s ease';
+                });
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateX(0)';
+                });
+            });
+
+            // Add smooth scroll animation
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Add keyboard shortcut for starting quiz (Space or Enter)
+        document.addEventListener('keydown', function(e) {
+            if (e.code === 'Space' || e.code === 'Enter') {
+                e.preventDefault();
+                const startButton = document.querySelector('a[href*="take_quiz"]');
+                startButton.click();
+            }
+        });
+    </script>
+</body>
+</html>

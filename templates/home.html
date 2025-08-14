@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>QuizHub - The Ultimate Quiz Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Animated background particles */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .bg-animation::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 20% 80%, rgba(255,255,255,0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255,255,255,0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(255,255,255,0.05) 0%, transparent 50%);
+            animation: float 20s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(10deg); }
+        }
+
+        /* Header */
+        .app-header {
+            padding: 20px 40px;
+            background: rgba(255,255,255,0.98);
+            backdrop-filter: blur(15px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 100;
+            border-bottom: 1px solid rgba(102, 126, 234, 0.1);
+        }
+
+        .logo {
+            font-size: 32px;
+            font-weight: 800;
+            color: #667eea;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-decoration: none;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        .logo::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 3px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 2px;
+            transition: width 0.4s ease;
+        }
+
+        .logo:hover::after {
+            width: 100%;
+        }
+
+        .logo i {
+            font-size: 36px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: pulse-glow 3s ease-in-out infinite;
+            filter: drop-shadow(0 0 8px rgba(102, 126, 234, 0.3));
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { 
+                transform: scale(1); 
+                filter: drop-shadow(0 0 8px rgba(102, 126, 234, 0.3));
+            }
+            50% { 
+                transform: scale(1.1) rotate(5deg); 
+                filter: drop-shadow(0 0 15px rgba(102, 126, 234, 0.6));
+            }
+        }
+
+        /* Modern Navigation */
+        .modern-nav {
+            display: flex;
+            gap: 30px;
+            margin-left: 50px;
+        }
+
+        .nav-link {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            position: relative;
+            padding: 10px 0;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 2px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            transition: width 0.4s ease;
+        }
+
+        .nav-link:hover {
+            color: #764ba2;
+            transform: translateY(-2px);
+        }
+
+        .nav-link:hover::before {
+            width: 100%;
+        }
+
+        .nav-link i {
+            margin-right: 8px;
+            animation: float-icon 2s ease-in-out infinite;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            text-align: center;
+            padding: 80px 20px;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            margin: 50px auto;
+            max-width: 1000px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(102, 126, 234, 0.1), transparent);
+            animation: shimmer 3s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(30deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(30deg); }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-section h1 {
+            font-size: 48px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.2;
+        }
+
+        .hero-text {
+            font-size: 20px;
+            margin-bottom: 40px;
+            color: #666;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn-large {
+            padding: 16px 32px;
+            font-size: 18px;
+            font-weight: 600;
+            border-radius: 30px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+        }
+
+        .btn-outline {
+            border: 2px solid #667eea;
+            color: #667eea;
+            background: transparent;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-outline:hover {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Features Section */
+        .features-section {
+            padding: 80px 40px;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            margin: 50px auto;
+            max-width: 1200px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+        }
+
+        .features-section h2 {
+            text-align: center;
+            font-size: 36px;
+            font-weight: 800;
+            margin-bottom: 50px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 40px 30px;
+            text-align: center;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+        }
+
+        .feature-card i {
+            font-size: 48px;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .feature-card h3 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .feature-card p {
+            color: #666;
+            line-height: 1.6;
+            font-size: 16px;
+        }
+
+        /* Stats Section */
+        .stats-section {
+            padding: 60px 40px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            margin: 50px auto;
+            max-width: 1200px;
+            border-radius: 20px;
+            color: white;
+            text-align: center;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-top: 40px;
+        }
+
+        .stat-item h3 {
+            font-size: 36px;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+
+        .stat-item p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        /* Footer */
+        .app-footer {
+            text-align: center;
+            padding: 40px;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            color: #666;
+            font-weight: 600;
+            margin-top: 50px;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: #764ba2;
+        }
+
+        /* Logo and Icon Animations */
+        .quiz-icon {
+            display: inline-block;
+            animation: spin 4s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .bounce-icon {
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+
+        .shake-icon {
+            animation: shake 3s ease-in-out infinite;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-2px); }
+            20%, 40%, 60%, 80% { transform: translateX(2px); }
+        }
+
+        .float-icon {
+            animation: float-up-down 3s ease-in-out infinite;
+        }
+
+        @keyframes float-up-down {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .glow-icon {
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 5px rgba(102, 126, 234, 0.5); }
+            to { text-shadow: 0 0 20px rgba(102, 126, 234, 0.8), 0 0 30px rgba(118, 75, 162, 0.6); }
+        }
+
+        .rotate-icon {
+            animation: rotate-slow 6s linear infinite;
+        }
+
+        @keyframes rotate-slow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .scale-icon {
+            animation: scale-pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes scale-pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .app-header {
+                padding: 15px 20px;
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .modern-nav {
+                margin-left: 0;
+                gap: 20px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .nav-link {
+                font-size: 14px;
+            }
+
+            .hero-section h1 {
+                font-size: 36px;
+            }
+
+            .hero-text {
+                font-size: 18px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .features-section, .stats-section {
+                padding: 40px 20px;
+                margin: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+    
+    <header class="app-header">
+        <a href="{{ url_for('home') }}" class="logo">
+            <i class="fas fa-graduation-cap quiz-icon"></i>
+            QuizHub
+        </a>
+        <nav class="modern-nav">
+            <a href="#features" class="nav-link">
+                <i class="fas fa-star"></i>Features
+            </a>
+            <a href="{{ url_for('about') }}" class="nav-link">
+                <i class="fas fa-info-circle"></i>About
+            </a>
+            <a href="{{ url_for('join_quiz') }}" class="nav-link">
+                <i class="fas fa-play"></i>Join Quiz
+            </a>
+            {% if session.username %}
+            <a href="{{ url_for('profile') }}" class="nav-link">
+                <i class="fas fa-user"></i>Profile
+            </a>
+            <a href="{{ url_for('logout') }}" class="nav-link">
+                <i class="fas fa-sign-out-alt"></i>Logout
+            </a>
+            {% endif %}
+        </nav>
+    </header>
+
+    <main class="hero-section">
+        <div class="hero-content">
+            <h1>Master Your Knowledge with QuizHub</h1>
+            <p class="hero-text">
+                The ultimate platform for creating and taking interactive quizzes. 
+                Learn smarter, test better, and achieve more with our advanced quiz system.
+            </p>
+            {% if not session.username %}
+            <div class="action-buttons">
+                <a href="{{ url_for('login') }}" class="btn btn-large btn-outline">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </a>
+                <a href="{{ url_for('register') }}" class="btn btn-large btn-primary">
+                    <i class="fas fa-user-plus"></i> Sign Up
+                </a>
+            </div>
+            {% else %}
+            <div class="action-buttons">
+                <a href="{{ url_for('profile') }}" class="btn btn-large btn-primary">
+                    <i class="fas fa-user"></i> My Dashboard
+                </a>
+                <a href="{{ url_for('join_quiz') }}" class="btn btn-large btn-outline">
+                    <i class="fas fa-play"></i> Join Quiz
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </main>
+
+    <section class="stats-section">
+        <h2>Trusted by Thousands</h2>
+        <div class="stats-grid">
+            <div class="stat-item">
+                <h3>50K+</h3>
+                <p>Active Users</p>
+            </div>
+            <div class="stat-item">
+                <h3>25K+</h3>
+                <p>Quizzes Created</p>
+            </div>
+            <div class="stat-item">
+                <h3>1M+</h3>
+                <p>Questions Answered</p>
+            </div>
+            <div class="stat-item">
+                <h3>95%</h3>
+                <p>User Satisfaction</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="features" class="features-section">
+        <h2>Why Choose QuizHub?</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <i class="fas fa-brain bounce-icon"></i>
+                <h3>Smart Learning</h3>
+                <p>Our adaptive algorithms help reinforce knowledge where you need it most, personalizing your learning experience.</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-chalkboard-teacher shake-icon"></i>
+                <h3>Educator Approved</h3>
+                <p>Trusted by teachers worldwide for classroom and remote learning with comprehensive educational tools.</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-chart-line float-icon"></i>
+                <h3>Detailed Analytics</h3>
+                <p>Track progress with comprehensive performance reports and insights to improve your learning outcomes.</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-mobile-alt glow-icon"></i>
+                <h3>Mobile Friendly</h3>
+                <p>Access your quizzes anywhere, anytime with our responsive design that works perfectly on all devices.</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-users rotate-icon"></i>
+                <h3>Team Collaboration</h3>
+                <p>Create study groups, share quizzes, and collaborate with friends and colleagues for better learning.</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-trophy scale-icon"></i>
+                <h3>Gamification</h3>
+                <p>Earn points, unlock achievements, and compete with others to make learning fun and engaging.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer class="app-footer">
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="{{ url_for('about') }}"><i class="fas fa-info-circle bounce-icon"></i> About</a>
+                <a href="#contact"><i class="fas fa-envelope float-icon"></i> Contact</a>
+                <a href="#privacy"><i class="fas fa-shield-alt glow-icon"></i> Privacy</a>
+                <a href="#terms"><i class="fas fa-file-contract shake-icon"></i> Terms</a>
+                <a href="#help"><i class="fas fa-question-circle rotate-icon"></i> Help</a>
+            </div>
+            <p>
+                <i class="fas fa-heart" style="color: #e74c3c;"></i>
+                &copy; 2024 QuizHub. Empowering learners everywhere.
+                <i class="fas fa-heart" style="color: #e74c3c;"></i>
+            </p>
+        </div>
+    </footer>
+</body>
+</html>

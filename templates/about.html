@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Me - QuizHub</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <h1>About Me</h1>
+    </header>
+
+    <main>
+        <section class="about-section">
+            <h2>Hi, I'm Anamika!</h2>
+            <p>
+                Welcome to <strong>QuizHub</strong> — a platform I created to make learning fun, interactive, and accessible to everyone.
+                Whether you're a student, a teacher, or just someone who loves a good quiz, QuizHub is here to keep your mind sharp.
+            </p>
+
+            <p>
+                I’m passionate about using technology to make education engaging and meaningful.
+                Through QuizHub, I aim to bring together curious minds from around the world to share knowledge and have fun while doing it.
+            </p>
+
+            <h3>Contact Me</h3>
+            <ul>
+                <li><strong>Mobile:</strong> 8292055416</li>
+                <li><strong>Email:</strong> <a href="mailto:tanamika1207@gmail.com">tanamika1207@gmail.com</a></li>
+            </ul>
+
+            <!-- Return to Home Button -->
+            <a href="{{ url_for('home') }}" class="btn btn-primary" style="display:inline-block; padding:10px 20px; background:#007BFF; color:white; border-radius:5px; text-decoration:none;">
+                ⬅ Return to Home
+            </a>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 QuizHub. All rights reserved.</p>
+    </footer>
+</body>
+</html>

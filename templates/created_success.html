@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Quiz Created - Quizzy</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container" style="max-width: 700px; margin: 4rem auto; padding: 0 1rem;">
+        
+        <!-- Success Animation -->
+        <div style="text-align: center; margin-bottom: 3rem;">
+            <div style="font-size: 6rem; margin-bottom: 1rem;">
+                <i class="fas fa-check-circle" style="color: #48bb78; animation: successBounce 1s ease-out;"></i>
+            </div>
+            <h2 style="color: #48bb78; font-size: 2.5rem; margin-bottom: 1rem; animation: slideUp 0.8s ease-out;">
+                Quiz Created Successfully! 🎉
+            </h2>
+            <p style="color: #718096; font-size: 1.1rem; animation: slideUp 0.8s ease-out 0.2s both;">
+                Your quiz is ready and waiting for students to join!
+            </p>
+        </div>
+
+        <!-- Quiz Details Card -->
+        <div class="card" style="padding: 3rem 2rem; background: linear-gradient(135deg, rgba(72, 187, 120, 0.05) 0%, rgba(56, 178, 172, 0.05) 100%); border: 1px solid rgba(72, 187, 120, 0.2); animation: fadeInScale 0.6s ease-out 0.4s both;">
+            
+            <!-- Quiz Info -->
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <div style="display: inline-flex; align-items: center; background: rgba(72, 187, 120, 0.1); padding: 0.75rem 1.5rem; border-radius: 20px; font-weight: 600; color: #48bb78; margin-bottom: 2rem;">
+                    <i class="fas fa-clipboard-check" style="margin-right: 0.5rem;"></i>
+                    Quiz Details
+                </div>
+            </div>
+
+            <!-- Title -->
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <h3 style="color: #4a5568; margin-bottom: 0.5rem;">Quiz Title</h3>
+                <div style="font-size: 1.5rem; font-weight: 700; color: #667eea; padding: 1rem; background: rgba(102, 126, 234, 0.1); border-radius: 12px;">
+                    "{{ title }}"
+                </div>
+            </div>
+
+            <!-- Quiz Code - Main Focus -->
+            <div style="text-align: center; margin: 3rem 0; padding: 2rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 16px; color: white; position: relative; overflow: hidden;">
+                
+                <!-- Background decoration -->
+                <div style="position: absolute; top: -50px; right: -50px; width: 100px; height: 100px; background: rgba(255,255,255,0.1); border-radius: 50%; opacity: 0.5;"></div>
+                <div style="position: absolute; bottom: -30px; left: -30px; width: 60px; height: 60px; background: rgba(255,255,255,0.1); border-radius: 50%; opacity: 0.3;"></div>
+                
+                <div style="position: relative; z-index: 1;">
+                    <h3 style="margin-bottom: 1rem;">
+                        <i class="fas fa-key" style="margin-right: 0.5rem;"></i>
+                        Share this code with your students
+                    </h3>
+                    <div id="quizCode" style="font-size: 3rem; font-weight: 800; letter-spacing: 4px; margin: 1rem 0; font-family: 'Courier New', monospace; text-shadow: 2px 2px 4px rgba(0,0,0,0.2);">
+                        {{ code }}
+                    </div>
+                    <button onclick="copyCode()" class="btn" style="background: rgba(255,255,255,0.2); color: white; border: 2px solid rgba(255,255,255,0.3); margin-top: 1rem; transition: all 0.3s ease;" onmouseover="this.style.background='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'">
+                        <i class="fas fa-copy" id="copyIcon"></i>
+                        <span id="copyText">Copy Code</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Additional Info -->
+            <div style="display: grid; grid-template-columns: 1fr; gap: 1rem; margin: 2rem 0;">
+                <div style="display: flex; align-items: center; padding: 1rem; background: rgba(237, 137, 54, 0.05); border-radius: 12px; border-left: 4px solid #ed8936;">
+                    <i class="fas fa-clock" style="font-size: 2rem; color: #ed8936; margin-right: 1rem;"></i>
+                    <div>
+                        <h4 style="margin: 0; color: #4a5568;">Time Limit</h4>
+                        <p style="margin: 0.25rem 0 0 0; color: #718096;">
+                            {% if time_limit == 0 %}
+                                No time limit - Students can take their time
+                            {% else %}
+                                {{ time_limit }} minutes per attempt
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Next Steps -->
+            <div style="background: rgba(79, 172, 254, 0.05); border-radius: 12px; padding: 2rem; margin: 2rem 0; border-left: 4px solid #4facfe;">
+                <h4 style="color: #4facfe; margin-bottom: 1rem;">
+                    <i class="fas fa-lightbulb"></i> What's Next?
+                </h4>
+                <div style="display: grid; gap: 1rem;">
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <i class="fas fa-share-alt" style="color: #48bb78; font-size: 1.2rem;"></i>
+                        <span>Share the quiz code <strong>{{ code }}</strong> with your students</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <i class="fas fa-users" style="color: #f093fb; font-size: 1.2rem;"></i>
+                        <span>Students can join using the "Join Quiz" feature</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <i class="fas fa-chart-bar" style="color: #ed8936; font-size: 1.2rem;"></i>
+                        <span>Monitor results and view the leaderboard</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 3rem; flex-wrap: wrap;">
+                <a href="{{ url_for('profile') }}" class="btn btn-outline btn-large">
+                    <i class="fas fa-home"></i> Dashboard
+                </a>
+                <a href="{{ url_for('result', code=code) }}" class="btn btn-primary btn-large">
+                    <i class="fas fa-chart-line"></i> View Leaderboard
+                </a>
+                <a href="{{ url_for('create_quiz') }}" class="btn btn-secondary btn-large">
+                    <i class="fas fa-plus"></i> Create Another
+                </a>
+            </div>
+        </div>
+
+        <!-- Celebration Confetti -->
+        <div id="confetti"></div>
+    </div>
+
+    <style>
+        @keyframes successBounce {
+            0% { transform: scale(0.3) rotate(-10deg); opacity: 0; }
+            50% { transform: scale(1.1) rotate(5deg); opacity: 1; }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes fadeInScale {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes confetti {
+            0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+
+        .confetti-piece {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: #ffd700;
+            animation: confetti 3s linear infinite;
+        }
+    </style>
+
+    <script>
+        // Copy code functionality
+        function copyCode() {
+            const code = '{{ code }}';
+            navigator.clipboard.writeText(code).then(() => {
+                const copyIcon = document.getElementById('copyIcon');
+                const copyText = document.getElementById('copyText');
+                
+                copyIcon.className = 'fas fa-check';
+                copyText.textContent = 'Copied!';
+                
+                setTimeout(() => {
+                    copyIcon.className = 'fas fa-copy';
+                    copyText.textContent = 'Copy Code';
+                }, 2000);
+            }).catch(() => {
+                // Fallback for browsers that don't support clipboard API
+                const textArea = document.createElement('textarea');
+                textArea.value = code;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                
+                const copyText = document.getElementById('copyText');
+                copyText.textContent = 'Copied!';
+                setTimeout(() => {
+                    copyText.textContent = 'Copy Code';
+                }, 2000);
+            });
+        }
+
+        // Create confetti effect
+        function createConfetti() {
+            const colors = ['#ffd700', '#ff6b6b', '#4ecdc4', '#45b7d1', '#f9ca24', '#6c5ce7'];
+            const confettiContainer = document.getElementById('confetti');
+            
+            for (let i = 0; i < 50; i++) {
+                const confettiPiece = document.createElement('div');
+                confettiPiece.className = 'confetti-piece';
+                confettiPiece.style.left = Math.random() * 100 + 'vw';
+                confettiPiece.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confettiPiece.style.animationDelay = Math.random() * 3 + 's';
+                confettiPiece.style.animationDuration = Math.random() * 3 + 2 + 's';
+                confettiContainer.appendChild(confettiPiece);
+            }
+            
+            // Clean up confetti after animation
+            setTimeout(() => {
+                confettiContainer.innerHTML = '';
+            }, 6000);
+        }
+
+        // Trigger confetti on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(createConfetti, 500);
+            
+            // Focus on the quiz code for easy copying
+            document.getElementById('quizCode').addEventListener('click', copyCode);
+        });
+
+        // Add some interactive effects
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animate elements on scroll
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            });
+
+            // Add pulse effect to quiz code
+            setInterval(() => {
+                const quizCode = document.getElementById('quizCode');
+                quizCode.style.transform = 'scale(1.05)';
+                setTimeout(() => {
+                    quizCode.style.transform = 'scale(1)';
+                }, 200);
+            }, 5000);
+        });
+    </script>
+</body>
+</html>

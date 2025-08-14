@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Create AI Quiz - Quizzy</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container" style="max-width: 700px; margin: 2rem auto; padding: 0 1rem;">
+        <!-- Header -->
+        <div class="quiz-header">
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <div style="font-size: 4rem; margin-bottom: 1rem;">
+                    <i class="fas fa-magic" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;"></i>
+                </div>
+                <h2 class="quiz-title">✨ AI Quiz Generator</h2>
+                <p style="color: #718096; font-size: 1.1rem;">Let artificial intelligence create the perfect quiz for you</p>
+            </div>
+        </div>
+
+        <!-- AI Quiz Form -->
+        <form method="post" id="aiQuizForm" class="card" style="padding: 2.5rem; background: linear-gradient(135deg, rgba(240, 147, 251, 0.05) 0%, rgba(245, 87, 108, 0.05) 100%); border: 1px solid rgba(240, 147, 251, 0.2);">
+            
+            <!-- Quiz Configuration -->
+            <div style="margin-bottom: 2rem;">
+                <h3 style="margin-bottom: 1.5rem; color: #f093fb;">
+                    <i class="fas fa-cog"></i> Quiz Configuration
+                </h3>
+                
+                <div class="form-group">
+                    <label for="num_q">
+                        <i class="fas fa-list-ol" style="margin-right: 0.5rem; color: #f093fb;"></i>
+                        Number of Questions
+                    </label>
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <input type="range" id="questionRange" min="1" max="15" value="8" style="flex: 1; height: 8px; background: linear-gradient(to right, #f093fb, #f5576c); border-radius: 4px; outline: none;">
+                        <input type="number" id="num_q" name="num_q" min="1" max="15" value="8" required class="form-input" style="width: 80px; text-align: center; font-weight: 600; color: #f093fb;">
+                    </div>
+                    <p style="font-size: 0.85rem; color: #718096; margin-top: 0.5rem;">Choose between 1 and 15 questions</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="category">
+                        <i class="fas fa-tags" style="margin-right: 0.5rem; color: #f093fb;"></i>
+                        Category
+                    </label>
+                    <select name="category" required class="form-select" style="background-image: linear-gradient(45deg, transparent 50%, #f093fb 50%), linear-gradient(135deg, #f093fb 50%, transparent 50%);">
+                        <option value="9">🧠 General Knowledge</option>
+                        <option value="17">🔬 Science & Nature</option>
+                        <option value="19">📊 Mathematics</option>
+                        <option value="18">💻 Computers</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="difficulty">
+                        <i class="fas fa-signal" style="margin-right: 0.5rem; color: #f093fb;"></i>
+                        Difficulty Level
+                    </label>
+                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem;">
+                        <label class="difficulty-option" style="display: flex; flex-direction: column; align-items: center; padding: 1rem; border: 2px solid #e2e8f0; border-radius: 12px; cursor: pointer; transition: all 0.3s ease; text-align: center;">
+                            <input type="radio" name="difficulty" value="" style="display: none;">
+                            <i class="fas fa-random" style="font-size: 1.5rem; color: #718096; margin-bottom: 0.5rem;"></i>
+                            <strong style="font-size: 0.9rem;">Any</strong>
+                            <small style="color: #a0aec0;">Mixed</small>
+                        </label>
+                        <label class="difficulty-option" style="display: flex; flex-direction: column; align-items: center; padding: 1rem; border: 2px solid #e2e8f0; border-radius: 12px; cursor: pointer; transition: all 0.3s ease; text-align: center;">
+                            <input type="radio" name="difficulty" value="easy" style="display: none;">
+                            <i class="fas fa-seedling" style="font-size: 1.5rem; color: #48bb78; margin-bottom: 0.5rem;"></i>
+                            <strong style="font-size: 0.9rem;">Easy</strong>
+                            <small style="color: #a0aec0;">Beginner</small>
+                        </label>
+                        <label class="difficulty-option" style="display: flex; flex-direction: column; align-items: center; padding: 1rem; border: 2px solid #e2e8f0; border-radius: 12px; cursor: pointer; transition: all 0.3s ease; text-align: center;">
+                            <input type="radio" name="difficulty" value="medium" style="display: none;">
+                            <i class="fas fa-fire" style="font-size: 1.5rem; color: #ed8936; margin-bottom: 0.5rem;"></i>
+                            <strong style="font-size: 0.9rem;">Medium</strong>
+                            <small style="color: #a0aec0;">Intermediate</small>
+                        </label>
+                        <label class="difficulty-option" style="display: flex; flex-direction: column; align-items: center; padding: 1rem; border: 2px solid #e2e8f0; border-radius: 12px; cursor: pointer; transition: all 0.3s ease; text-align: center;">
+                            <input type="radio" name="difficulty" value="hard" style="display: none;">
+                            <i class="fas fa-bolt" style="font-size: 1.5rem; color: #f56565; margin-bottom: 0.5rem;"></i>
+                            <strong style="font-size: 0.9rem;">Hard</strong>
+                            <small style="color: #a0aec0;">Expert</small>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="time_limit">
+                        <i class="fas fa-stopwatch" style="margin-right: 0.5rem; color: #f093fb;"></i>
+                        Time Limit (minutes)
+                    </label>
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <input type="number" id="time_limit" name="time_limit" min="0" value="10" required class="form-input" style="flex: 1;">
+                        <span style="color: #718096; font-size: 0.9rem;">Set to 0 for no timer ⏰</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Features Info -->
+            <div style="background: rgba(102, 126, 234, 0.05); border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem; border-left: 4px solid #667eea;">
+                <h4 style="color: #667eea; margin-bottom: 1rem;">
+                    <i class="fas fa-robot"></i> AI-Powered Features
+                </h4>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <i class="fas fa-brain" style="color: #48bb78; font-size: 1.2rem;"></i>
+                        <span style="font-size: 0.9rem;">Smart question generation</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <i class="fas fa-balance-scale" style="color: #4facfe; font-size: 1.2rem;"></i>
+                        <span style="font-size: 0.9rem;">Balanced difficulty</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <i class="fas fa-lightning-bolt" style="color: #f093fb; font-size: 1.2rem;"></i>
+                        <span style="font-size: 0.9rem;">Instant generation</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <i class="fas fa-check-circle" style="color: #ed8936; font-size: 1.2rem;"></i>
+                        <span style="font-size: 0.9rem;">Quality assured</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 2rem; padding-top: 2rem; border-top: 1px solid rgba(240, 147, 251, 0.2);">
+                <a href="{{ url_for('profile') }}" class="btn btn-outline">
+                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                </a>
+                <button type="submit" class="btn btn-secondary btn-large">
+                    <i class="fas fa-magic"></i> Generate AI Quiz ✨
+                </button>
+            </div>
+        </form>
+
+        <!-- Loading Animation (hidden by default) -->
+        <div id="loadingOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9999; backdrop-filter: blur(5px);">
+            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; color: white;">
+                <div style="font-size: 4rem; margin-bottom: 1rem;">
+                    <i class="fas fa-brain" style="animation: pulse 1.5s infinite; color: #f093fb;"></i>
+                </div>
+                <h3 style="margin-bottom: 1rem;">AI is crafting your quiz...</h3>
+                <div style="width: 300px; height: 4px; background: rgba(255,255,255,0.2); border-radius: 2px; overflow: hidden;">
+                    <div style="height: 100%; background: linear-gradient(90deg, #f093fb, #f5576c); border-radius: 2px; animation: loading 2s infinite;"></div>
+                </div>
+                <p style="margin-top: 1rem; color: #a0aec0;">This may take a few moments...</p>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .difficulty-option:hover {
+            border-color: #f093fb !important;
+            background: rgba(240, 147, 251, 0.1) !important;
+            transform: translateY(-2px);
+        }
+        
+        .difficulty-option:has(input[type="radio"]:checked) {
+            border-color: #f093fb !important;
+            background: rgba(240, 147, 251, 0.15) !important;
+            transform: translateY(-2px);
+        }
+
+        @keyframes loading {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.7; }
+        }
+
+        /* Custom range slider styling */
+        input[type="range"] {
+        -webkit-appearance: none;
+        background: transparent;
+        cursor: pointer;
+        }
+
+        input[type="range"]::-webkit-slider-track {
+            background: linear-gradient(to right, #f093fb, #f5576c);
+            height: 8px;
+            border-radius: 4px;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            background: white;
+            border: 3px solid #f093fb;
+            border-radius: 50%;
+            height: 24px;
+            width: 24px;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+    </style>
+
+    <script>
+        // Sync range slider with number input
+        const rangeSlider = document.getElementById('questionRange');
+        const numberInput = document.getElementById('num_q');
+
+        rangeSlider.addEventListener('input', function() {
+            numberInput.value = this.value;
+        });
+
+        numberInput.addEventListener('input', function() {
+            rangeSlider.value = this.value;
+        });
+
+        // Handle form submission with loading
+        document.getElementById('aiQuizForm').addEventListener('submit', function(e) {
+            const button = this.querySelector('button[type="submit"]');
+            const overlay = document.getElementById('loadingOverlay');
+            
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
+            button.disabled = true;
+            overlay.style.display = 'block';
+        });
+
+        // Set default difficulty to "Any"
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelector('input[name="difficulty"][value=""]').checked = true;
+        });
+    </script>
+</body>
+</html>
